@@ -1,0 +1,37 @@
+{
+	"name": "Earth",
+	"radius": 6.371e6,
+	"mass": 5.973e24,
+	"sideralPeriod": {
+		"days": 1,
+		"direction": "Prograde"
+	},
+	"orbit": {
+		"distance": 1.496e11,
+		"direction": "Prograde"
+	},
+	"sun": {
+		"name": "Sun",
+		"radius": 6.963e8,
+		"mass": 1.989e30,
+		"sideralPeriod": {
+			"days":  27.280,
+			"direction": "Prograde"
+		}
+	},
+	"moons": [
+		{
+			"name": "Moon",
+			"radius": 1.737e6,
+			"mass": 7.348e22,
+			"sideralPeriod": {
+				"days": 27.321,
+				"direction": "Prograde"
+			},
+			"orbit": {
+				"distance": 3.844e8,
+				"direction": "Prograde"
+			}
+		}
+	]
+}
