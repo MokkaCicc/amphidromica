@@ -1,10 +1,9 @@
 use std::f64::consts::PI;
 
 use super::Planet;
-use crate::{
-	enums::Rotation,
-	helpers::{Period, Time},
-};
+use crate::enums::Direction;
+use crate::helpers::{Period, Time};
+use crate::traits::Body;
 
 pub struct Moon<'a> {
 	// name of the moon
@@ -31,7 +30,7 @@ impl<'a> Moon<'a> {
 		radius: f64,
 		mass: f64,
 		distance: f64,
-		rotation: Rotation,
+		direction: Direction,
 		planet: (f64, f64),
 	) -> Self {
 		Self {
@@ -39,7 +38,7 @@ impl<'a> Moon<'a> {
 			radius,
 			mass,
 			distance,
-			orbital_period: Period::from_kepler_law(distance, planet.1 + mass, rotation),
+			orbital_period: Period::from_kepler_law(distance, planet.1 + mass, direction),
 			// https://www.encyclopedie-environnement.org/en/zoom/how-to-estimate-tidal-amplitude/
 			tidal_influence: 2.0 * mass * planet.0 / planet.1 * (planet.0 / distance).powf(3.0),
 		}
@@ -47,14 +46,14 @@ impl<'a> Moon<'a> {
 
 	pub fn get_synodic_period_seconds(&self, planet: &Planet) -> f64 {
 		let moon_period = self.orbital_period.time.into_seconds();
-		let planet_period = planet.rotation_period.time.into_seconds();
+		let planet_period = planet.revolution_period().time.into_seconds();
 
 		// moon day is calculated with this formula :
 		// abs(moon_period ± planet_period) / moon_period
 		// where - is used when the planet and the moon have the same rotation direction
 		if self
 			.orbital_period
-			.is_same_rotation_direction(&planet.rotation_period)
+			.is_same_rotation_direction(&planet.revolution_period())
 		{
 			moon_period * planet_period / (moon_period - planet_period).abs()
 		} else {
@@ -71,11 +70,11 @@ impl<'a> Moon<'a> {
 
 	pub fn get_tidal_at(&self, hours: f64) -> f64 {
 		let period = 2880.0 / self.orbital_period.time.into_hours();
-		match self.orbital_period.rotation {
-			Rotation::Prograde => {
+		match self.orbital_period.direction {
+			Direction::Prograde => {
 				(self.tidal_influence / 2.0) * f64::sin(-1.0 * PI * period * hours)
 			}
-			Rotation::Retrograde => (self.tidal_influence / 2.0) * f64::sin(PI * period * hours),
+			Direction::Retrograde => (self.tidal_influence / 2.0) * f64::sin(PI * period * hours),
 		}
 	}
 

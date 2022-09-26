@@ -1,17 +1,19 @@
 mod enums;
 mod helpers;
 mod structs;
+mod traits;
 
-use enums::Rotation;
+use enums::Direction;
 use helpers::{Period, Time};
 use structs::{Moon, Planet};
+use traits::Body;
 
 fn main() {
 	let mut earth = Planet::new(
 		"Earth",
 		6.371e6,
 		5.973e24,
-		Period::new(Time::new(1, 0, 0, 0), Rotation::Prograde),
+		Period::new(Time::new(1, 0, 0, 0), Direction::Prograde),
 	);
 	let sun = Moon::new(
 		"Sun",
@@ -19,16 +21,16 @@ fn main() {
 		1.989e30,
 		1.496e11,
 		// Retrograde because assimiled to a moon
-		Rotation::Retrograde,
-		(earth.radius, earth.mass),
+		Direction::Retrograde,
+		(earth.radius(), earth.mass()),
 	);
 	let moon = Moon::new(
 		"Pomia",
 		1.737e6,
 		7.348e22,
 		3.844e8,
-		Rotation::Prograde,
-		(earth.radius, earth.mass),
+		Direction::Prograde,
+		(earth.radius(), earth.mass()),
 	);
 
 	earth.add_moon(&sun);
@@ -55,6 +57,6 @@ fn main() {
 				println!("\tvisible diameter : {:.3}cm", moon.get_visible_diameter())
 			}
 		}
-		None => println!("{} does not have any moons", earth.name),
+		None => println!("{} does not have any moons", earth.name()),
 	}
 }

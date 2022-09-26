@@ -1,2 +1,2 @@
-mod rotation;
-pub use rotation::Rotation;
+mod direction;
+pub use direction::Direction;

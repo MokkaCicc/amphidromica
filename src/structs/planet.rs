@@ -1,19 +1,13 @@
 use crate::helpers::{Period, TidalRange};
+use crate::traits::Body;
 
 use super::Moon;
 
 pub struct Planet<'a> {
-	// name of the planet
-	pub name: &'a str,
-
-	// radius of the planet, in meters
-	pub radius: f64,
-
-	// mass of the planet, in kilogramms
-	pub mass: f64,
-
-	// period of one full revolution of the planet in days, hours and minutes
-	pub rotation_period: Period,
+	name: &'a str,
+	radius: f64,
+	mass: f64,
+	revolution_period: Period,
 
 	// the moons of the planet
 	pub moons: Vec<&'a Moon<'a>>,
@@ -26,12 +20,12 @@ pub struct Planet<'a> {
 }
 
 impl<'a> Planet<'a> {
-	pub fn new(name: &'a str, radius: f64, mass: f64, rotation_period: Period) -> Self {
+	pub fn new(name: &'a str, radius: f64, mass: f64, revolution_period: Period) -> Self {
 		Self {
 			name,
 			radius,
 			mass,
-			rotation_period,
+			revolution_period,
 			moons: Vec::new(),
 			tidal_range: None,
 			is_tidal_range_updated: true,
@@ -73,5 +67,39 @@ impl<'a> Planet<'a> {
 		let base_tidal = tidal_amplitudes.into_iter().sum();
 		self.tidal_range = Some(TidalRange::new(base_tidal));
 		self.is_tidal_range_updated = true;
+	}
+}
+
+impl<'a> Body<'a> for Planet<'a> {
+	fn name(&self) -> &str {
+		self.name
+	}
+
+	fn set_name(&mut self, name: &'a str) {
+		self.name = name;
+	}
+
+	fn radius(&self) -> f64 {
+		self.radius
+	}
+
+	fn set_radius(&mut self, radius: f64) {
+		self.radius = radius;
+	}
+
+	fn mass(&self) -> f64 {
+		self.mass
+	}
+
+	fn set_mass(&mut self, mass: f64) {
+		self.mass = mass;
+	}
+
+	fn revolution_period(&self) -> Period {
+		self.revolution_period
+	}
+
+	fn set_revolution_period(&mut self, period: Period) {
+		self.revolution_period = period;
 	}
 }

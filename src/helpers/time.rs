@@ -14,7 +14,7 @@ const SECONDE_TO_DAYS: f64 = 1.0 / DAY_TO_SECONDES;
 const SECONDE_TO_HOURS: f64 = 1.0 / HOUR_TO_SECONDES;
 const SECONDE_TO_MINUTES: f64 = 1.0 / MINUTE_TO_SECONDES;
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct Time {
 	pub d: f64, // days
 	pub h: f64, // hours
