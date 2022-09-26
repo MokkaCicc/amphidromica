@@ -1,5 +1,5 @@
 mod body;
 pub use body::Body;
 
-mod orbit;
-pub use orbit::Orbit;
+mod orbiter;
+pub use orbiter::Orbiter;

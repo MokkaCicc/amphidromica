@@ -1,31 +1,44 @@
+use crate::enums::Direction;
 use crate::helpers::{Period, TidalRange};
-use crate::traits::Body;
 
 use super::Moon;
 
 pub struct Planet<'a> {
-	name: &'a str,
-	radius: f64,
-	mass: f64,
-	revolution_period: Period,
-
-	// the moons of the planet
+	pub name: &'a str,
+	pub radius: f64,
+	pub mass: f64,
+	pub revolution_period: Period,
+	pub revolution_direction: Direction,
+	pub orbit_period: Period,
+	pub orbit_direction: Direction,
+	pub orbit_distance: f64,
 	pub moons: Vec<&'a Moon<'a>>,
 
-	// the tidal ranges of this planet
 	tidal_range: Option<TidalRange>,
-
-	// if the tidal ranges are up to date.
 	is_tidal_range_updated: bool,
 }
 
 impl<'a> Planet<'a> {
-	pub fn new(name: &'a str, radius: f64, mass: f64, revolution_period: Period) -> Self {
+	pub fn new(
+		name: &'a str,
+		radius: f64,
+		mass: f64,
+		revolution_period: Period,
+		revolution_direction: Direction,
+		orbit_direction: Direction,
+		orbit_distance: f64,
+		sun_mass: f64,
+	) -> Self {
+		let orbit_period = Period::from_kepler_law(sun_mass + mass, orbit_distance);
 		Self {
 			name,
 			radius,
 			mass,
 			revolution_period,
+			revolution_direction,
+			orbit_period,
+			orbit_direction,
+			orbit_distance,
 			moons: Vec::new(),
 			tidal_range: None,
 			is_tidal_range_updated: true,
@@ -67,39 +80,5 @@ impl<'a> Planet<'a> {
 		let base_tidal = tidal_amplitudes.into_iter().sum();
 		self.tidal_range = Some(TidalRange::new(base_tidal));
 		self.is_tidal_range_updated = true;
-	}
-}
-
-impl<'a> Body<'a> for Planet<'a> {
-	fn name(&self) -> &str {
-		self.name
-	}
-
-	fn set_name(&mut self, name: &'a str) {
-		self.name = name;
-	}
-
-	fn radius(&self) -> f64 {
-		self.radius
-	}
-
-	fn set_radius(&mut self, radius: f64) {
-		self.radius = radius;
-	}
-
-	fn mass(&self) -> f64 {
-		self.mass
-	}
-
-	fn set_mass(&mut self, mass: f64) {
-		self.mass = mass;
-	}
-
-	fn revolution_period(&self) -> Period {
-		self.revolution_period
-	}
-
-	fn set_revolution_period(&mut self, period: Period) {
-		self.revolution_period = period;
 	}
 }
