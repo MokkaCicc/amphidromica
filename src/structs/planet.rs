@@ -1,5 +1,4 @@
-use crate::enums::Direction;
-use crate::helpers::{Period, TidalRange};
+use crate::helpers::{Orbit, Revolution, TidalRange};
 
 use super::Moon;
 
@@ -7,11 +6,8 @@ pub struct Planet<'a> {
 	pub name: &'a str,
 	pub radius: f64,
 	pub mass: f64,
-	pub revolution_period: Period,
-	pub revolution_direction: Direction,
-	pub orbit_period: Period,
-	pub orbit_direction: Direction,
-	pub orbit_distance: f64,
+	pub revolution: Revolution,
+	pub orbit: Orbit,
 	pub moons: Vec<&'a Moon<'a>>,
 
 	tidal_range: Option<TidalRange>,
@@ -23,22 +19,15 @@ impl<'a> Planet<'a> {
 		name: &'a str,
 		radius: f64,
 		mass: f64,
-		revolution_period: Period,
-		revolution_direction: Direction,
-		orbit_direction: Direction,
-		orbit_distance: f64,
-		sun_mass: f64,
+		revolution: Revolution,
+		orbit: Orbit,
 	) -> Self {
-		let orbit_period = Period::from_kepler_law(sun_mass + mass, orbit_distance);
 		Self {
 			name,
 			radius,
 			mass,
-			revolution_period,
-			revolution_direction,
-			orbit_period,
-			orbit_direction,
-			orbit_distance,
+			revolution,
+			orbit,
 			moons: Vec::new(),
 			tidal_range: None,
 			is_tidal_range_updated: true,
@@ -58,10 +47,10 @@ impl<'a> Planet<'a> {
 		self.tidal_range.as_ref()
 	}
 
-	pub fn get_tidal_at(&self, hours: f64) -> f64 {
+	pub fn tidal_at(&self, hours: f64) -> f64 {
 		let mut tidals = Vec::new();
 		for moon in self.moons.to_owned() {
-			tidals.push(moon.get_tidal_at(hours));
+			tidals.push(moon.tidal_at(hours, &self));
 		}
 		tidals.into_iter().sum()
 	}
@@ -75,7 +64,7 @@ impl<'a> Planet<'a> {
 
 		let mut tidal_amplitudes = Vec::new();
 		for moon in self.moons.to_owned() {
-			tidal_amplitudes.push(moon.tidal_influence)
+			tidal_amplitudes.push(moon.tidal_influence(&self))
 		}
 		let base_tidal = tidal_amplitudes.into_iter().sum();
 		self.tidal_range = Some(TidalRange::new(base_tidal));
