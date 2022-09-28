@@ -44,11 +44,4 @@ impl<'a> Moon<'a> {
 			Direction::Retrograde => (tidal_influence / 2.0) * f64::sin(PI * period * hours),
 		}
 	}
-
-	// get the diameter from this moon as seen from the planet
-	// the size in mesured is in centimeters measured at arm's length (0.75m)
-	pub fn get_visible_diameter(&self) -> f64 {
-		let size = 0.75 * 2.0 * self.radius / self.orbit.distance;
-		size * 100.0
-	}
 }

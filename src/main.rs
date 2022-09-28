@@ -1,7 +1,6 @@
 mod enums;
 mod helpers;
 mod structs;
-mod traits;
 
 use enums::Direction;
 use helpers::{Orbit, Period, Revolution};
@@ -47,9 +46,25 @@ fn main() {
 			"{} is orbiting {} :",
 			orbit.satellite.name, orbit.primary.name
 		);
-		println!("\tadius : {:10.3e} m", orbit.radius);
-		println!("\tperiod : {} kg", orbit.period);
+		println!("\tradius : {:10.3e} m", orbit.radius);
+		println!("\tperiod : {}", orbit.period);
 		println!("\tdirection : {}", orbit.direction);
+		println!(
+			"\tsynodic period (primary) : {}",
+			orbit.synodic_period_primary()
+		);
+		println!(
+			"\tsynodic period (satellite) : {}",
+			orbit.synodic_period_satellite()
+		);
+		println!(
+			"\tvisible diameter (primary) : {:.3}cm",
+			orbit.visible_diameter_primary()
+		);
+		println!(
+			"\tvisible diameter (satellite) : {:.3}cm",
+			orbit.visible_diameter_satellite()
+		);
 		println!();
 	}
 
