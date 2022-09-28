@@ -1,8 +1,11 @@
-mod moon;
-pub use moon::Moon;
+mod body;
+pub use body::Body;
 
-mod planet;
-pub use planet::Planet;
+// mod moon;
+// pub use moon::Moon;
 
-mod sun;
-pub use sun::Sun;
+// mod planet;
+// pub use planet::Planet;
+
+// mod sun;
+// pub use sun::Sun;

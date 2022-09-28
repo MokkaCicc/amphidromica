@@ -35,8 +35,8 @@ impl Period {
 		}
 	}
 
-	pub fn from_kepler_law(system_mass: f64, distance: f64) -> Self {
-		let period_seconds = 2.0 * PI * f64::sqrt(f64::powf(distance, 3.0) / (system_mass * G));
+	pub fn from_kepler_law(system_mass: f64, orbit_radius: f64) -> Self {
+		let period_seconds = 2.0 * PI * f64::sqrt(f64::powf(orbit_radius, 3.0) / (system_mass * G));
 		Period::from_seconds(period_seconds)
 	}
 
@@ -85,6 +85,10 @@ impl Period {
 
 impl fmt::Display for Period {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-		write!(f, "{}d {}h {}m {}s", self.d, self.h, self.m, self.s)
+		write!(
+			f,
+			"{:.0}d {:.0}h {:.0}m {:.0}s",
+			self.d, self.h, self.m, self.s
+		)
 	}
 }
