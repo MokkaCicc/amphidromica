@@ -4,6 +4,7 @@ use crate::structs::Body;
 use super::Period;
 
 const ARM_LENGTH: f64 = 0.75;
+
 pub struct Orbit<'a> {
 	pub primary: &'a Body<'a>,
 	pub satellite: &'a Body<'a>,
