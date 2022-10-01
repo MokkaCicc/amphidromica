@@ -1,3 +1,5 @@
+use std::f64::consts::PI;
+
 use crate::enums::Direction;
 use crate::structs::Body;
 
@@ -37,13 +39,7 @@ impl<'a> Orbit<'a> {
 		direction: Direction,
 	) -> Self {
 		let period = Period::from_kepler_law(primary.mass + satellite.mass, radius);
-		Self {
-			primary,
-			satellite,
-			radius,
-			period,
-			direction,
-		}
+		Orbit::new(primary, satellite, radius, period, direction)
 	}
 
 	fn synodic_period(
@@ -92,5 +88,29 @@ impl<'a> Orbit<'a> {
 	pub fn visible_diameter_satellite(&self) -> f64 {
 		let size = ARM_LENGTH * 2.0 * self.satellite.radius / self.radius;
 		size * 100.0
+	}
+
+	pub fn tidal_influance_primary(&self) -> f64 {
+		2.0 * self.primary.mass * self.satellite.radius / self.satellite.mass
+			* (self.satellite.radius / self.radius).powf(3.0)
+	}
+
+	pub fn tidal_influance_satellite(&self) -> f64 {
+		// https://www.encyclopedie-environnement.org/en/zoom/how-to-estimate-tidal-amplitude/
+		2.0 * self.satellite.mass * self.primary.radius / self.primary.mass
+			* (self.primary.radius / self.radius).powf(3.0)
+	}
+
+	pub fn tidal_at(&self, hours: f64, tidal_influence: f64) -> f64 {
+		let period_seconds =
+			2.0 * self.primary.revolution.period.into_seconds() / self.period.into_seconds();
+		match self.direction {
+			Direction::Prograde => {
+				(tidal_influence / 2.0) * f64::sin(-1.0 * PI * period_seconds * hours)
+			}
+			Direction::Retrograde => {
+				(tidal_influence / 2.0) * f64::sin(PI * period_seconds * hours)
+			}
+		}
 	}
 }

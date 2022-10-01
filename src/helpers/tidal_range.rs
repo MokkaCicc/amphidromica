@@ -3,8 +3,8 @@ use std::fmt;
 
 pub const TIDAL_MULTS: (f64, f64, f64) = (
 	1.921, // from 0 to 2m on earth
-	3.842, // from 2m to 4m on earth
-	7.683, // from 4m to 8m on earth
+	3.841, // from 2m to 4m on earth
+	7.682, // from 4m to 8m on earth
 );
 
 #[derive(Debug)]
@@ -27,7 +27,6 @@ pub struct TidalRange {
 
 impl TidalRange {
 	pub fn new(tidal_range: f64) -> Self {
-		let tidal_range = tidal_range;
 		let micro_tidal = Range::new(None, Some(tidal_range * TIDAL_MULTS.0));
 		let meso_tidal = Range::new(
 			Some(tidal_range * TIDAL_MULTS.0),
@@ -46,6 +45,11 @@ impl TidalRange {
 			macro_tidal,
 			mega_tidal,
 		}
+	}
+
+	pub fn from_amplitudes(tidal_ranges: Vec<f64>) -> Self {
+		let base_tidal = tidal_ranges.into_iter().sum();
+		TidalRange::new(base_tidal)
 	}
 }
 

@@ -6,6 +6,8 @@ use enums::Direction;
 use helpers::{Orbit, Period, Revolution};
 use structs::Body;
 
+use crate::helpers::TidalRange;
+
 fn main() {
 	let sun = Body::new(
 		"Sun",
@@ -27,10 +29,10 @@ fn main() {
 	);
 	let bodies = vec![&sun, &earth, &moon];
 
-	let orbits = vec![
-		Orbit::from_kepler_law(&sun, &earth, 1.496e11, Direction::Prograde),
-		Orbit::from_kepler_law(&earth, &moon, 3.844e8, Direction::Prograde),
-	];
+	let sun_earth = Orbit::from_kepler_law(&sun, &earth, 1.496e11, Direction::Prograde);
+	let earth_moon = Orbit::from_kepler_law(&earth, &moon, 3.844e8, Direction::Prograde);
+
+	let orbits = vec![&sun_earth, &earth_moon];
 
 	for body in bodies {
 		println!("{} :", body.name);
@@ -65,29 +67,21 @@ fn main() {
 			"\tvisible diameter (satellite) : {:.3}cm",
 			orbit.visible_diameter_satellite()
 		);
+		println!(
+			"\ttidal influance (primary) : {:.3}m",
+			orbit.tidal_influance_primary()
+		);
+		println!(
+			"\ttidal influance (satellite) : {:.3}m",
+			orbit.tidal_influance_satellite()
+		);
 		println!();
 	}
 
-	// let hours = 69.0;
-	// match earth.get_tidal_range() {
-	// 	Some(range) => {
-	// 		println!("{}", range);
-	// 		println!("Tidal at {} hours : {:.3}m", hours, earth.tidal_at(hours));
-	// 		println!();
-	// 		for moon in &earth.moons {
-	// 			println!("{} : ", moon.name);
-	// 			println!("\tradius : {:10.3e}m", moon.radius);
-	// 			println!("\tmass : {:10.3e}kg", moon.mass);
-	// 			println!("\tdistance : {:10.3e}m", moon.orbit.distance);
-	// 			println!("\tinfluence : {:.3}", moon.tidal_influence(&earth) / 2.0);
-	// 			println!("\torbital period : {}", moon.orbit.period);
-	// 			println!(
-	// 				"\tsynodic period : {}",
-	// 				earth.revolution.synodic_period(&moon.orbit)
-	// 			);
-	// 			println!("\tvisible diameter : {:.3}cm", moon.get_visible_diameter())
-	// 		}
-	// 	}
-	// 	None => println!("{} does not have any moons", earth.name),
-	// }
+	let tidal_ranges = vec![
+		sun_earth.tidal_influance_primary(),
+		earth_moon.tidal_influance_satellite(),
+	];
+	println!("Tidal on earth : ");
+	println!("{}", TidalRange::from_amplitudes(tidal_ranges));
 }
